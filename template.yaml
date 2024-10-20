@@ -1,0 +1,278 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  BudgetTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: BudgetTable
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  CreateAccountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: account/create.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        CreateAccountApi:
+          Type: Api
+          Properties:
+            Path: /account
+            Method: POST
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+  
+  GetAccountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: account/get.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        GetAccountApi:
+          Type: Api
+          Properties:
+            Path: /account/{accountId}
+            Method: GET
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  DeleteAccountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: account/delete.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        DeleteAccountApi:
+          Type: Api
+          Properties:
+            Path: /account/{accountId}
+            Method: DELETE
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+  
+  UpdateAccountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: account/update.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        UpdateAccountApi:
+          Type: Api
+          Properties:
+            Path: /account/{accountId}
+            Method: PUT
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  CreateTransactionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: transaction/create.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        CreateTransactionApi:
+          Type: Api
+          Properties:
+            Path: /account/{accountId}/transaction
+            Method: POST
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  ListTransactionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: transaction/list.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        GetTransactionApi:
+          Type: Api
+          Properties:
+            Path: /account/{accountId}/transaction
+            Method: GET
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  GetTransactionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: transaction/get.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        GetTransactionApi:
+          Type: Api
+          Properties:
+            Path: /transaction/{transactionId}
+            Method: GET
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  DeleteTransactionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: transaction/delete.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        DeleteTransactionApi:
+          Type: Api
+          Properties:
+            Path: /transaction/{transactionId}
+            Method: DELETE
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  UpdateTransactionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: transaction/update.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        UpdateTransactionApi:
+          Type: Api
+          Properties:
+            Path: /transaction/{transactionId}
+            Method: PUT
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: user/create.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        CreateUserApi:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: POST
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: user/get.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        GetUserApi:
+          Type: Api
+          Properties:
+            Path: /user/{userId}
+            Method: GET
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+
+  DeleteUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: user/delete.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        DeleteUserApi:
+          Type: Api
+          Properties:
+            Path: /user/{userId}
+            Method: DELETE
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
+  
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: user/update.handler
+      Runtime: nodejs18.x
+      CodeUri: ./packages/api/src/lambdas
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BudgetTable
+          DYNAMODB_ENDPOINT: http://localhost:8000
+      Events:
+        UpdateUserApi:
+          Type: Api
+          Properties:
+            Path: /user/{userId}
+            Method: PUT
+    Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref BudgetTable
